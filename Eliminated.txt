@@ -1,0 +1,12 @@
+//Program Name: Program-3
+//Author: Bryson Brown 
+//Description: 
+//This program reads in animals from a text file then places the animals in 
+//a doubly linked list where the head and tail are connected.
+//The program will eliminate a given number of animals from the list.
+//The program will use a multiplier that is input by the user
+//Every 11th animal will be outputted until the final animal is the winner.
+//Semester: Spring 2018
+//Course: 1063 Data Structures
+//Date: 4/30/2018
+
