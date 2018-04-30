@@ -72,18 +72,18 @@ int main()
 	fin.clear();
 	fin.seekg(0, std::ios::beg);
 
-	cout << "Choose a number: " << endl;
+	cout << "Input a number: " << endl;
 	cin >> num;
 
 	//Asks user to input a number 1-13
 	while (num < 1 || num > 13)
 	{
-		cout << "Pick another number: " << endl;
+		cout << "Input another number: " << endl;
 
 		cin >> num;
 	}
 	//Outfiles multiplier 
-	outfile << "The chosen multiplier: " << num << endl;
+	outfile << "The multiplier selected: " << num << endl;
 	
 	//Gives the first animal in list 
 	fin >> first;
@@ -95,7 +95,7 @@ int main()
 
 		length = first.length() * num;
 
-		second = List.EvenorOdd(length);
+		second = List.checkEvenorOdd(length);
 
 		//Prints every 11th animal
 		if (listSize % 11 == 0)
