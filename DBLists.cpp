@@ -1,105 +1,250 @@
 #include <iostream>
-#include <fstream>
 #include <string>
+#include <fstream>
 #include "DBHeaderList.h"
 
 using namespace std;
 
-int main()
-{
-	//Instance for class 
-	DBList List;
 
-	//Manipulate
-	string first;
-	string second;
+DBList::DBList() {
+	Head = NULL;
+	Tail = NULL;
+	Current = NULL;
+}
 
-	int listSize = 0;
-	int rand = 0;
-	int num = 0;
-	int length = 0;
+// Funtion Name: InsertFront
+// Inserts a value at the front of the list
+// Params:
+// string : animal to be inserted
 
-	//Enter seeding
-	cout << "Enter a number that will serve as the random seed:" << endl;
-	cin >> rand;
-	srand(rand);
+void DBList::InsertFront(string Data) {
+	Node* Temp = new Node(Data);
+	InsertFront(Temp);
 
-	
-	ifstream fin("animals.txt");
-	ofstream outfile("Eliminated.txt");
+}
 
-	outfile << "//Program Name: Program-3" << endl;
-	outfile << "//Author: Bryson Brown " << endl;
-	outfile << "//Description: " << endl;
-	outfile << "//This program reads in animals from a text file then places the animals in " << endl;
-	outfile << "//a doubly linked list where the head and tail are connected." << endl;
-	outfile << "//The program will eliminate a given number of animals from the list." << endl;
-	outfile << "//The program will use a multiplier that is input by the user" << endl;
-	outfile << "//Every 11th animal will be outputted until the final animal is the winner." << endl;
-	outfile << "//Semester: Spring 2018" << endl;
-	outfile << "//Course: 1063 Data Structures" << endl;
-	outfile << "//Date: 4/30/2018" << endl << endl;
-	
-	
+// Funtion Name: InsertFront
+// Discription: Inserts a value at the front of the list
+// Params:
+// Node* &Temp : allows formation of the node and
+// linkage to the other possible nodes
 
-	//Insert items
-	while (!fin.eof()) {
-
-		fin >> first;
-
-		listSize++;
-
-		List.InsertRear(first);
-
+void DBList::InsertFront(Node* &Temp) {
+	if (!Head) {
+		Head = Temp;
+		Tail = Temp;
+		Tail->Next = Head;
+		Current = Temp;
+		Head->Prev = Tail;
 	}
-
-	//Resets list
-	fin.clear();
-	fin.seekg(0, std::ios::beg);
-
-	cout << "Choose a number: " << endl;
-	cin >> num;
-
-	//Asks user to input a number 1-13
-	while (num > 13 || num < 1)
-	{
-		cout << "Pick another number: " << endl;
-
-		cin >> num;
+	else {
+		Temp->Next = Head;
+		Temp->Prev = Tail;
+		Head->Prev = Temp;
+		Tail->Next = Temp;
+		Head = Temp;
+		Current = Head;
 	}
-	//Outfiles multiplier 
-	outfile << "The chosen multiplier: " << num << endl;
+}
 
-	while (!fin.eof())
-	{
-		//Gives the first animal in list 
-		fin >> first;
+// Function Name: InsertRear
+// Discription: Inserts a value at the rear of the list
+// Params:
+// Node* &Temp : allows formation of the node and
+// linking to the other nodes
 
-		outfile << "First: ";
-		
-		//List is greater than 1
-		while (listSize > 1) {
+void DBList::InsertRear(Node* &Temp) {
+	if (!Head) {
+		DBList::InsertFront(Temp);
+	}
+	else {
+		Tail->Next = Temp;
+		Temp->Prev = Tail;
+		Tail = Temp;
+		Temp->Next = Head;
+		Head->Prev = Tail;
+		Current = Tail;
+	}
+}
 
-			length = first.length() * num;
-			second = List.EvenorOdd(length);
+// Function Name:InsertRear
+// Discription: Inserts a value at the rear of the list
+// Params:
+// string: animal to be stored
 
-			////Prints every 11th animal
-			if (listSize % 11 == 0)
-			{
-				outfile << "- " << second << endl;
 
-				cout << " " << second << endl;
-			}
-			else
-			{
-				cout << " " << second << endl;
-			}
+void DBList::InsertRear(string Data) {
+	if (!Head) {
+		DBList::InsertFront(Data);
+	}
+	else {
+		Node* Temp = new Node(Data);
+		InsertRear(Temp);
+	}
+}
 
-			fin >> first;
 
-			listSize--;
+
+// Function Name: Delete
+// Discription: checks to see if you can possibly delete node
+// Params:
+// string x: checks to see if the string passed in
+// is available for deletion, if not returns false.
+// Returns: boolean
+
+
+
+bool DBList::Delete(string x) {
+	if (Head == Tail && Head->Data == x) {
+		delete Head;
+		Head = NULL;
+		Tail = NULL;
+		Current = NULL;
+		return true;
+	}
+	else if (Head->Data == x) {
+		Head = Head->Next;
+		Current = Head;
+		delete Head->Prev;
+		Head->Prev = Tail;
+		return true;
+	}
+	else if (Tail->Data == x) {
+		Tail = Tail->Prev;
+		delete Tail->Next;
+		Tail->Next = Head;
+		Current = Tail;
+		return true;
+	}
+	else {
+		Node* Location = DBList::_Search(x);
+		if (Location) {
+			Location->Prev->Next = Location->Next;
+			Location->Next->Prev = Location->Prev;
+			Current = Location->Next;
+			delete Location;
+			return true;
 		}
 	}
-	//Prints Results
-	List.Print(outfile);
+	return false;
+}
+
+// Function Name:Search
+// Discription:searches for a string
+// Params:
+// string x- in order to check if the string exists
+// Returns:
+// false
+
+bool DBList::Search(string x) {
+	return false;
+}
+
+
+// Function Name:Print
+// Discription: Prints out the survivor
+// Params: int column and ofstream &outfile:
+// allows the program to print out the survivor
+
+
+
+void DBList::Print(int column, ofstream &outfile) {
+	Node *Temp = Head;
+	int count = 1;
+
+	while (Temp != Tail) {
+		Temp = Temp->Next;
+		if (column && count % column == 0)
+			count++;
+	}
+	outfile << "WINNER: " << Tail->Data << "!!" << endl;
+}
+
+// Function Name: Print
+// Discription: allows the print function to be called
+// Params: Node* &Temp :
+// ofstream &outfile : allows outfiling to txt.
+
+void DBList::Print(ofstream &outfile) {
+	DBList::Print(0, outfile);
+}
+
+
+
+// Function Name: _Search
+// Discription: Searches for a key string
+// Params: string key: the key string method will search for
+
+Node* DBList::_Search(string key) {
+	Node* Temp = Head;
+
+	while (Temp) {
+		if (Temp->Data == key) {
+			return Temp;
+		}
+		Temp = Temp->Next;
+	}
+	return NULL;
+}
+
+
+
+// Function Name: EvenorOdd
+// Discription: checks if the number is even or odd to determine
+// if the list will go left or right
+// Params: int check: the integer that is used to
+// determine the direction
+
+// Returns : DeleteNode(temp)
+
+
+string DBList::checkEvenorOdd(int var) {
+	Node *temp = Current;
+
+	if (var % 2 == 0)
+	{
+		for (int i = 0; i < var; i++)
+		{
+			Current = Current->Next;
+		}
+
+		temp = Current;
+	}
+	else
+	{
+		for (int i = 0; i < var; i++)
+		{
+			Current = Current->Prev;
+		}
+
+		temp = Current;
+	}
+
+	Current = Current->Next;
+
+	return deleteNode(temp);
+}
+
+// Function Name:deleteNode
+// deletes a node to eliminate the animals
+// Params: Node* temp : allows for traversal and deletion
+
+string DBList::deleteNode(Node* temp) {
+	if (temp == Head)
+	{
+		Head = Head->Next;
+	}
+
+	if (temp == Tail)
+	{
+		Tail = Tail->Prev;
+	}
+
+	temp->Prev->Next = temp->Next;
+
+	temp->Next->Prev = temp->Prev;
+
+	return temp->Data;
+
+	delete temp;
 }
