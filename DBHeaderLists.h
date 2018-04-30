@@ -38,5 +38,5 @@ public:
 	void Print(int, ofstream&);
 	void rPrint();
 	string deleteNode(Node*);
-	string EvenorOdd(int check);
+	string checkEvenorOdd(int check);
 };
